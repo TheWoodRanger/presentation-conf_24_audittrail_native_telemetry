@@ -2,8 +2,6 @@
 
 This repo is as landing page for presentation resources, information, known issues, and updates from the Splunk .Conf 2024 session *Maximizing Splunk Core: Analyzing Splunk Searches Using audittrail and Native Splunk Telemetry* given by Ryan Wood.
 
-If you have any resources, utilities, references that you'd like to share, reach out and let me know.
-
 
 **2024.06 - Presentation recording will be added here when Splunk makes it available**
 
@@ -60,6 +58,14 @@ Twitter: `@TheWoodRanger`
       - [Reporting SPL Using Collected Summary Data](#reporting-spl-using-collected-summary-data)
         - [Reporting SPL - `/search/jobs` Metadata - `sourcetype=`](#reporting-spl---searchjobs-metadata---sourcetype)
         - [Reporting SPL - `search.log` via REST - `sourcetype=search_jobs_search_log_events`](#reporting-spl---searchlog-via-rest---sourcetypesearch_jobs_search_log_events)
+    - [Conf Presentation - Object Usage Identification Macros](#conf-presentation---object-usage-identification-macros)
+      - [AP4S Usage Macro - `get_index_reference(1)`](#ap4s-usage-macro---get_index_reference1)
+      - [AP4S Usage Macro - `get_sourcetype_reference(1)`](#ap4s-usage-macro---get_sourcetype_reference1)
+      - [AP4S Usage Macro - `get_source_reference(1)`](#ap4s-usage-macro---get_source_reference1)
+      - [AP4S Usage Macro - `get_eventtype_reference(1)`](#ap4s-usage-macro---get_eventtype_reference1)
+      - [AP4S Usage Macro - `get_macro_reference(1)`](#ap4s-usage-macro---get_macro_reference1)
+      - [AP4S Usage Macro - `get_lookup_reference(1)`](#ap4s-usage-macro---get_lookup_reference1)
+      - [AP4S Usage Macro - `get_datamodel_reference(1)`](#ap4s-usage-macro---get_datamodel_reference1)
 
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -117,7 +123,7 @@ Apps referenced during the 2024 conf presentation here. If you'd like to share y
   - See slides for specific objects.
   - [Sideview UI](https://splunkbase.splunk.com/app/6449)
   - [Splunk Cloud Migration Assessment](https://splunkbase.splunk.com/app/4974)
-  - [Admin Pilot For Splunk](https://splunkbase.splunk.com/app/6489)
+  - [Admin Pilot For Splunk (AP4S)](https://splunkbase.splunk.com/app/6489)
   - [Alerts for Splunk Admins](https://splunkbase.splunk.com/app/3796)
 
 
@@ -307,6 +313,7 @@ Audittrail includes full SPL queries, so auto extraction often picks up false fi
 | eval searchQuery = replace(searchQuery, "',\s[^\s=]+='[^']+$", "")
 
 ```
+
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -548,4 +555,282 @@ index=summary sourcetype=search_jobs_search_log_events
 | eval index_usage_tuple_reference = split(index_usage_tuple_reference, ",")
 | stats dc(search_id) AS search_count, values(index_usage_*) AS index_usage_* BY savedsearch_label
 ```
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+### Conf Presentation - Object Usage Identification Macros
+
+Macros were gathered from App: `Admin Pilot For Splunk (AP4S) / insights_app_splunk` version 1.1.12
+Please see [app on Splunkbase](https://splunkbase.splunk.com/app/6489) for latest version of objects and other great reporting pieces.
+
+- `get_index_reference(1)`
+- `get_sourcetype_reference(1)`
+- `get_source_reference(1)`
+- `get_eventtype_reference(1)`
+- `get_macro_reference(1)`
+- `get_lookup_reference(1)`
+- `get_datamodel_reference(1)`
+
+
+App on Splunkbase: [https://splunkbase.splunk.com/app/6489](https://splunkbase.splunk.com/app/6489)
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+#### AP4S Usage Macro - `get_index_reference(1)`
+
+UI definition:
+
+```spl
+rex field=$field$ max_match=100 "index\s*=[\s\"]?(?<Index_Reference1>[a-z0-9-_*]+)[\s\"]" 
+| rex field=$field$ max_match=100 "index\s*=\s*\"?(?<Index_Reference2>_[a-z]+)[\s\"]" 
+| rex field=$field$ max_match=100 "index=(?<Index_Reference3>[a-z0-9-_*]+)" 
+| rex field=$field$ max_match=100 "index=(?<Index_Reference4>[`a-z0-9-_*]+)" 
+| rex field=$field$ max_match=100 "index=(?<Index_Reference5>\w+)"
+| rex field=$field$ max_match=100 "\|\s*collect\s+(?<Index_Reference6>`\S+`)" 
+| eval Index_Reference = mvdedup(trim(mvappend(Index_Reference1,Index_Reference2,Index_Reference3,Index_Reference4,Index_Reference5,Index_Reference6))) 
+| eval Index_Reference = if(match($field$, "index\s*=\s*_\*"), "all-internal-indexes", Index_Reference) 
+| eval Index_Reference = if(match($field$, "index\s*=\s*\*|index=\"\*\""), "all-indexes", Index_Reference) 
+| eval Index_Reference = mvfilter((!match(Index_Reference,"^1$"))) 
+| eval Index_Reference = if(isnull(Index_Reference) OR Index_Reference="", "no-index-reference", Index_Reference) 
+| fields - Index_Reference1 Index_Reference2 Index_Reference3 Index_Reference4 Index_Reference5 Index_Reference6
+```
+
+macros.conf stanza:
+
+```conf
+[get_index_reference(1)]
+description = Extracts Any Reference to Index(es) (Quick)
+args = field
+definition = rex field=$field$ max_match=100 "index\s*=[\s\"]?(?<Index_Reference1>[a-z0-9-_*]+)[\s\"]" \
+| rex field=$field$ max_match=100 "index\s*=\s*\"?(?<Index_Reference2>_[a-z]+)[\s\"]" \
+| rex field=$field$ max_match=100 "index=(?<Index_Reference3>[a-z0-9-_*]+)" \
+| rex field=$field$ max_match=100 "index=(?<Index_Reference4>[`a-z0-9-_*]+)" \
+| rex field=$field$ max_match=100 "index=(?<Index_Reference5>\w+)"\
+| rex field=$field$ max_match=100 "\|\s*collect\s+(?<Index_Reference6>`\S+`)" \
+| eval Index_Reference = mvdedup(trim(mvappend(Index_Reference1,Index_Reference2,Index_Reference3,Index_Reference4,Index_Reference5,Index_Reference6))) \
+| eval Index_Reference = if(match($field$, "index\s*=\s*_\*"), "all-internal-indexes", Index_Reference) \
+| eval Index_Reference = if(match($field$, "index\s*=\s*\*|index=\"\*\""), "all-indexes", Index_Reference) \
+| eval Index_Reference = mvfilter((!match(Index_Reference,"^1$"))) \
+| eval Index_Reference = if(isnull(Index_Reference) OR Index_Reference="", "no-index-reference", Index_Reference) \
+| fields - Index_Reference1 Index_Reference2 Index_Reference3 Index_Reference4 Index_Reference5 Index_Reference6
+
+```
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+#### AP4S Usage Macro - `get_sourcetype_reference(1)`
+
+UI definition:
+
+```spl
+rex field=$field$ max_match=100 "sourcetype\s*!?=\s*(?<Sourcetype_Reference>.*?)[\s]" 
+| rex field=Sourcetype_Reference mode=sed "s/[\s\",=()|]//g" 
+| eval Sourcetype_Reference = if(Sourcetype_Reference = "" OR match(Sourcetype_Reference, "\$") OR isnull(Sourcetype_Reference), "no-sourcetype-reference", Sourcetype_Reference) 
+| eval Sourcetype_Reference = if(match($field$, "sourcetype\s*=\s*\*|sourcetype=\"\*\""), "all-sourcetypes", Sourcetype_Reference)
+```
+
+macros.conf stanza:
+
+```conf
+[get_sourcetype_reference(1)]
+description = Extracts Any Reference to Source Type(s) (Quick)
+args = field
+definition = rex field=$field$ max_match=100 "sourcetype\s*!?=\s*(?<Sourcetype_Reference>.*?)[\s]" \
+| rex field=Sourcetype_Reference mode=sed "s/[\s\",=()|]//g" \
+| eval Sourcetype_Reference = if(Sourcetype_Reference = "" OR match(Sourcetype_Reference, "\$") OR isnull(Sourcetype_Reference), "no-sourcetype-reference", Sourcetype_Reference) \
+| eval Sourcetype_Reference = if(match($field$, "sourcetype\s*=\s*\*|sourcetype=\"\*\""), "all-sourcetypes", Sourcetype_Reference)
+```
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+#### AP4S Usage Macro - `get_source_reference(1)`
+
+UI definition:
+
+```spl
+rex field=$field$ max_match=100 "source\\s*=\\s*(?<Source_Reference1>.*?)[\\s\"\\|]" 
+| rex field=Source_Reference1 mode=sed "s/^[\\s$?><()\\\\,^=]*//g" 
+| rex field=$field$ max_match=100 "source\\s+IN\\s*\\((?<Source_Reference2>.*?)\\)" 
+| makemv delim="," Source_Reference2 
+| rex field=Source_Reference2 mode=sed "s/^[\\s$?><()\\\\,^=]*//g" 
+| eval Source_Reference=coalesce(Source_Reference1,Source_Reference2), Source_Reference=mvfilter((! match(Source_Reference,"^source|^\"|^ifisnull|^if\(|\.\*|^Mvindex|^lower|^mvfilter|^mvsort|^spath|^trim"))), 
+    Source_Reference=mvdedup(mvsort(Source_Reference)), Source_Reference=if(((Source_Reference == "") OR isnull(Source_Reference)),"no-source-reference",Source_Reference), Source_Reference=if(match($field$,"source\\s*=\\s*\\*|source=\"\\*\""),"all-sources", Source_Reference) 
+| fields - Source_Reference1 Source_Reference2
+| fillnull value="no-source-reference" Source_Reference
+```
+
+macros.conf stanza:
+
+```conf
+[get_source_reference(1)]
+description = Extracts Any Reference to Source(s) (Quick)
+args = field
+definition = rex field=$field$ max_match=100 "source\\s*=\\s*(?<Source_Reference1>.*?)[\\s\"\\|]" \
+| rex field=Source_Reference1 mode=sed "s/^[\\s$?><()\\\\,^=]*//g" \
+| rex field=$field$ max_match=100 "source\\s+IN\\s*\\((?<Source_Reference2>.*?)\\)" \
+| makemv delim="," Source_Reference2 \
+| rex field=Source_Reference2 mode=sed "s/^[\\s$?><()\\\\,^=]*//g" \
+| eval Source_Reference=coalesce(Source_Reference1,Source_Reference2), Source_Reference=mvfilter((! match(Source_Reference,"^source|^\"|^ifisnull|^if\(|\.\*|^Mvindex|^lower|^mvfilter|^mvsort|^spath|^trim"))), \
+    Source_Reference=mvdedup(mvsort(Source_Reference)), Source_Reference=if(((Source_Reference == "") OR isnull(Source_Reference)),"no-source-reference",Source_Reference), Source_Reference=if(match($field$,"source\\s*=\\s*\\*|source=\"\\*\""),"all-sources", Source_Reference) \
+| fields - Source_Reference1 Source_Reference2\
+| fillnull value="no-source-reference" Source_Reference
+
+```
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+#### AP4S Usage Macro - `get_eventtype_reference(1)`
+
+UI definition:
+
+```spl
+rex field=$field$ max_match=100 "eventtype\\s*=\\s*(?<Eventtype_Reference1>.*?)[\\s\"\\|]" 
+| rex field=Eventtype_Reference1 mode=sed "s/^[\\s$?><()\\\\,^=\\]\\[+]*//g" 
+| rex field=$field$ max_match=100 "eventtype\\s+IN\\s*\\((?<Eventtype_Reference2>.*?)\\)" 
+| makemv delim="," Eventtype_Reference2 
+| rex field=Eventtype_Reference2 mode=sed "s/^[\\s$?><()\\\\,^=]*//g" 
+| eval Eventtype_Reference=coalesce(Eventtype_Reference1,Eventtype_Reference2), Eventtype_Reference=mvfilter((! match(Eventtype_Reference,"^eventtype|^trim|ifisnull|^\""))), Eventtype_Reference=mvdedup(mvsort(Eventtype_Reference))
+| eval Eventtype_Reference=if(((Eventtype_Reference == "") OR isnull(Eventtype_Reference)),"no-eventtype-reference",Eventtype_Reference)
+| fields - Eventtype_Reference1 Eventtype_Reference2
+| fillnull value="no-eventtype-reference" Eventtype_Reference
+```
+
+macros.conf stanza:
+
+```conf
+[get_eventtype_reference(1)]
+description = Extracts Any Reference to Event Type(s) (Quick)
+args = field
+definition = rex field=$field$ max_match=100 "eventtype\\s*=\\s*(?<Eventtype_Reference1>.*?)[\\s\"\\|]" \
+| rex field=Eventtype_Reference1 mode=sed "s/^[\\s$?><()\\\\,^=\\]\\[+]*//g" \
+| rex field=$field$ max_match=100 "eventtype\\s+IN\\s*\\((?<Eventtype_Reference2>.*?)\\)" \
+| makemv delim="," Eventtype_Reference2 \
+| rex field=Eventtype_Reference2 mode=sed "s/^[\\s$?><()\\\\,^=]*//g" \
+| eval Eventtype_Reference=coalesce(Eventtype_Reference1,Eventtype_Reference2), Eventtype_Reference=mvfilter((! match(Eventtype_Reference,"^eventtype|^trim|ifisnull|^\""))), Eventtype_Reference=mvdedup(mvsort(Eventtype_Reference))\
+| eval Eventtype_Reference=if(((Eventtype_Reference == "") OR isnull(Eventtype_Reference)),"no-eventtype-reference",Eventtype_Reference)\
+| fields - Eventtype_Reference1 Eventtype_Reference2\
+| fillnull value="no-eventtype-reference" Eventtype_Reference
+
+```
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+#### AP4S Usage Macro - `get_macro_reference(1)`
+
+UI definition:
+
+```spl
+rex field=$field$ max_match=100 "`(?<Macro_Reference>\p{Any}+?)`" 
+| rex field=Macro_Reference mode=sed "s/\"|\s+//g" 
+| eval Macro_Reference = mvfilter((! match(Macro_Reference,"^\||^\)|^:|^\[|^comment|^ia4s_comment"))) 
+| eval Macro_Reference = if(((Macro_Reference == "") OR isnull(Macro_Reference)), "no-macro-reference", Macro_Reference) 
+| mvexpand Macro_Reference 
+| rex field=Macro_Reference max_match=100 "(?<Macro_Name>^[a-zA-Z0-9_-]+)" 
+| rex field=Macro_Reference max_match=100 "\((?<Macro_Args>.*?)\)" 
+| makemv delim="," Macro_Args 
+| eval Macro_Args_Count = mvcount(Macro_Args) 
+| eval Macro_Title = if (isnull(Macro_Args_Count), Macro_Name, Macro_Name . "(" . Macro_Args_Count . ")") 
+| eval Macro_Title = if(((Macro_Title == "") OR isnull(Macro_Title)), "no-macro-title", Macro_Title) 
+| fields - Macro_Reference1 Macro_Name Macro_Args Macro_Args_Count
+```
+
+macros.conf stanza:
+
+```conf
+[get_macro_reference(1)]
+description = Extracts Any Reference to Macros (Quick)
+args = field
+definition = rex field=$field$ max_match=100 "`(?<Macro_Reference>\p{Any}+?)`" \
+| rex field=Macro_Reference mode=sed "s/\"|\s+//g" \
+| eval Macro_Reference = mvfilter((! match(Macro_Reference,"^\||^\)|^:|^\[|^comment|^ia4s_comment"))) \
+| eval Macro_Reference = if(((Macro_Reference == "") OR isnull(Macro_Reference)), "no-macro-reference", Macro_Reference) \
+| mvexpand Macro_Reference \
+| rex field=Macro_Reference max_match=100 "(?<Macro_Name>^[a-zA-Z0-9_-]+)" \
+| rex field=Macro_Reference max_match=100 "\((?<Macro_Args>.*?)\)" \
+| makemv delim="," Macro_Args \
+| eval Macro_Args_Count = mvcount(Macro_Args) \
+| eval Macro_Title = if (isnull(Macro_Args_Count), Macro_Name, Macro_Name . "(" . Macro_Args_Count . ")") \
+| eval Macro_Title = if(((Macro_Title == "") OR isnull(Macro_Title)), "no-macro-title", Macro_Title) \
+| fields - Macro_Reference1 Macro_Name Macro_Args Macro_Args_Count
+
+```
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+#### AP4S Usage Macro - `get_lookup_reference(1)`
+
+UI definition:
+
+```spl
+rex field=$field$ max_match=100 "\|\s*inputlookup\s+(?<Input_Lookup>[^|]+)" 
+| rex field=$field$ max_match=100 "\|\s*from\s+inputlookup:(?<From_Input_Lookup>[^|]+)" 
+| rex field=$field$ max_match=100 "\|\s*from\s+lookup:(?<From_Lookup>[^|]+)" 
+| rex field=$field$ max_match=100 "\|\s*outputlookup\s+(?<Output_Lookup>[^|]+)" 
+| rex field=$field$ max_match=100 "\|\s*lookup\s+(?<Lookup_Lookup>[^|\s]+)" 
+| eval Input_Lookup = "Input_Lookup:".Input_Lookup , From_Input_Lookup = "From_Input_Lookup:".From_Input_Lookup, From_Lookup = "From_Lookup:".From_Lookup, Output_Lookup = "Output_Lookup:".Output_Lookup, Lookup_Lookup = "Lookup_Lookup:".Lookup_Lookup
+| eval Lookup_Reference=mvsort(mvdedup(lower(mvappend(Lookup_Lookup,Input_Lookup,From_Lookup,From_Input_Lookup,Output_Lookup)))) 
+| rex field=Lookup_Reference mode=sed "s/\"|append=\w+|create_empty=\w+|createinapp=\w+|override_if_empty=\w+|event_time_field=\w+|output_format=\w+|local=\w+|update=\w+|key_field=\w+|enabled=\w+|max=\w+|type=\w+|\s+where\s+.*|\$//g" 
+`ia4s_comment("| rex field=Lookup_Reference mode=sed "s/(\s|\]).*$//g" ")` 
+| eval Lookup_Reference=if(((Lookup_Reference == "") OR isnull(Lookup_Reference)),"no-lookup-reference", mvsort(mvdedup(trim(Lookup_Reference)))) 
+| fields - Input_Lookup,From_Input_Lookup,From_Lookup,Output_Lookup,Lookup_Lookup
+| fillnull value="no-lookup-reference" Lookup_Reference
+```
+
+macros.conf stanza:
+
+```conf
+[get_lookup_reference(1)]
+description = Extracts Any Reference to Lookups (Quick)
+args = field
+definition = rex field=$field$ max_match=100 "\|\s*inputlookup\s+(?<Input_Lookup>[^|]+)" \
+| rex field=$field$ max_match=100 "\|\s*from\s+inputlookup:(?<From_Input_Lookup>[^|]+)" \
+| rex field=$field$ max_match=100 "\|\s*from\s+lookup:(?<From_Lookup>[^|]+)" \
+| rex field=$field$ max_match=100 "\|\s*outputlookup\s+(?<Output_Lookup>[^|]+)" \
+| rex field=$field$ max_match=100 "\|\s*lookup\s+(?<Lookup_Lookup>[^|\s]+)" \
+| eval Input_Lookup = "Input_Lookup:".Input_Lookup , From_Input_Lookup = "From_Input_Lookup:".From_Input_Lookup, From_Lookup = "From_Lookup:".From_Lookup, Output_Lookup = "Output_Lookup:".Output_Lookup, Lookup_Lookup = "Lookup_Lookup:".Lookup_Lookup\
+| eval Lookup_Reference=mvsort(mvdedup(lower(mvappend(Lookup_Lookup,Input_Lookup,From_Lookup,From_Input_Lookup,Output_Lookup)))) \
+| rex field=Lookup_Reference mode=sed "s/\"|append=\w+|create_empty=\w+|createinapp=\w+|override_if_empty=\w+|event_time_field=\w+|output_format=\w+|local=\w+|update=\w+|key_field=\w+|enabled=\w+|max=\w+|type=\w+|\s+where\s+.*|\$//g" \
+`ia4s_comment("| rex field=Lookup_Reference mode=sed "s/(\s|\]).*$//g" ")` \
+| eval Lookup_Reference=if(((Lookup_Reference == "") OR isnull(Lookup_Reference)),"no-lookup-reference", mvsort(mvdedup(trim(Lookup_Reference)))) \
+| fields - Input_Lookup,From_Input_Lookup,From_Lookup,Output_Lookup,Lookup_Lookup\
+| fillnull value="no-lookup-reference" Lookup_Reference
+```
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+#### AP4S Usage Macro - `get_datamodel_reference(1)`
+
+
+UI definition:
+
+```spl
+rex field=$field$ max_match=100 "[fF][rR][oO][mM]\s*[dD][aA][tT][aA][mM][oO][dD][eE][lL][:=](?<Datamodel_Reference1>.*?)\s" 
+| rex field=$field$ max_match=100 "\|\s*(datamodel|datamodelsimple)\s+(?<Datamodel_Reference2>.*?)\s" 
+| eval Datamodel_Reference=coalesce(Datamodel_Reference1,Datamodel_Reference2) 
+| rex field=Datamodel_Reference mode=sed "s/\"//g" 
+| eval Datamodel_Reference = mvfilter( ! match(Datamodel_Reference, "^\$|type=|^\|") )
+| eval Datamodel_Reference=if(((Datamodel_Reference == "") OR isnull(Datamodel_Reference)),"no-datamodel-reference", mvdedup(mvsort(Datamodel_Reference)))
+| fields - Datamodel_Reference1 Datamodel_Reference2
+| fillnull value="no-datamodel-reference" Datamodel_Reference
+```
+
+macros.conf stanza:
+
+```conf
+[get_datamodel_reference(1)]
+description = Extracts Any Reference to Data Models (Quick)
+args = field
+definition = rex field=$field$ max_match=100 "[fF][rR][oO][mM]\s*[dD][aA][tT][aA][mM][oO][dD][eE][lL][:=](?<Datamodel_Reference1>.*?)\s" \
+| rex field=$field$ max_match=100 "\|\s*(datamodel|datamodelsimple)\s+(?<Datamodel_Reference2>.*?)\s" \
+| eval Datamodel_Reference=coalesce(Datamodel_Reference1,Datamodel_Reference2) \
+| rex field=Datamodel_Reference mode=sed "s/\"//g" \
+| eval Datamodel_Reference = mvfilter( ! match(Datamodel_Reference, "^\$|type=|^\|") )\
+| eval Datamodel_Reference=if(((Datamodel_Reference == "") OR isnull(Datamodel_Reference)),"no-datamodel-reference", mvdedup(mvsort(Datamodel_Reference)))\
+| fields - Datamodel_Reference1 Datamodel_Reference2\
+| fillnull value="no-datamodel-reference" Datamodel_Reference
+```
+
 
