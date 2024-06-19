@@ -8,7 +8,7 @@ This repo is as landing page for presentation resources, information, known issu
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-## Presentation Slides - Full PDF
+## **Presentation Slides - Full PDF**
 
 **Current Version of Slides: 1.0** - Link to Slides PDF: [Slide Deck](./PLA1837B%20-%20Splunk%20Audittrail%20Native%20Telemetry%20Conf%202024%20Presentation%20v1.0.pdf)
 
@@ -30,48 +30,48 @@ Twitter: `@TheWoodRanger`
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-## Table of Contents
+# **Table of Contents**
 
 - [Maximizing Splunk Core: Analyzing Splunk Searches Using Audittrail and Native Splunk Telemetry](#maximizing-splunk-core-analyzing-splunk-searches-using-audittrail-and-native-splunk-telemetry)
-  - [Presentation Slides - Full PDF](#presentation-slides---full-pdf)
+  - [**Presentation Slides - Full PDF**](#presentation-slides---full-pdf)
     - [Contact Information](#contact-information)
-  - [Table of Contents](#table-of-contents)
-- [Presentation Slide Deck Resources \& Materials](#presentation-slide-deck-resources--materials)
+- [**Table of Contents**](#table-of-contents)
+- [**Presentation Slide Deck Resources \& Materials**](#presentation-slide-deck-resources--materials)
   - [*A Note on Copying SPL from the PDF*](#a-note-on-copying-spl-from-the-pdf)
   - [Changelog of PDF Slide Deck](#changelog-of-pdf-slide-deck)
-- [Other Presentations/Utilities I want to Recommend](#other-presentationsutilities-i-want-to-recommend)
-  - [Utilities - Apps and Other Tools Not by Me](#utilities---apps-and-other-tools-not-by-me)
+- [**Other Presentations/Utilities I want to Recommend**](#other-presentationsutilities-i-want-to-recommend)
+  - [**Utilities - Apps and Other Tools Not by Me**](#utilities---apps-and-other-tools-not-by-me)
     - [Utilities Not by Me - Data Source Usage](#utilities-not-by-me---data-source-usage)
     - [Utilities Not by Me - Architecture/Admin Support](#utilities-not-by-me---architectureadmin-support)
     - [Utilities Not by Me - Search Information Reporting](#utilities-not-by-me---search-information-reporting)
-  - [Presentations - Ryan Wood](#presentations---ryan-wood)
-  - [**Presentations - Query Writing and Optimization**](#presentations---query-writing-and-optimization)
+  - [**Presentations - Ryan Wood**](#presentations---ryan-wood)
+  - [Presentations - Query Writing and Optimization](#presentations---query-writing-and-optimization)
   - [Other Presentations - Admin, Developer, Management](#other-presentations---admin-developer-management)
   - [Other Presentations - Dashboard Development](#other-presentations---dashboard-development)
-  - [Conf Presentation - Utility SPL From slides](#conf-presentation---utility-spl-from-slides)
-    - [Conf Presentation - Macro for Normalizing Search ID](#conf-presentation---macro-for-normalizing-search-id)
-    - [Conf Presentation - Utility SPL for Parsing Audittrail](#conf-presentation---utility-spl-for-parsing-audittrail)
-    - [Conf Presentation - Utility SPL Provided for Collection of Search Info \& Write to Summary](#conf-presentation---utility-spl-provided-for-collection-of-search-info--write-to-summary)
-      - [Notes on Summary Collection SPL Utilities](#notes-on-summary-collection-spl-utilities)
-      - [`search/jobs` Metadata Collection SPL - No search.log](#searchjobs-metadata-collection-spl---no-searchlog)
-      - [`search/jobs/<search ID>/search.log` search.log Collection SPL - Both MetaData and search.log](#searchjobssearch-idsearchlog-searchlog-collection-spl---both-metadata-and-searchlog)
-      - [Reporting SPL Using Collected Summary Data](#reporting-spl-using-collected-summary-data)
-        - [Reporting SPL - `/search/jobs` Metadata - `sourcetype=`](#reporting-spl---searchjobs-metadata---sourcetype)
-        - [Reporting SPL - `search.log` via REST - `sourcetype=search_jobs_search_log_events`](#reporting-spl---searchlog-via-rest---sourcetypesearch_jobs_search_log_events)
-    - [Conf Presentation - Object Usage Identification Macros](#conf-presentation---object-usage-identification-macros)
-      - [AP4S Usage Macro - `get_index_reference(1)`](#ap4s-usage-macro---get_index_reference1)
-      - [AP4S Usage Macro - `get_sourcetype_reference(1)`](#ap4s-usage-macro---get_sourcetype_reference1)
-      - [AP4S Usage Macro - `get_source_reference(1)`](#ap4s-usage-macro---get_source_reference1)
-      - [AP4S Usage Macro - `get_eventtype_reference(1)`](#ap4s-usage-macro---get_eventtype_reference1)
-      - [AP4S Usage Macro - `get_macro_reference(1)`](#ap4s-usage-macro---get_macro_reference1)
-      - [AP4S Usage Macro - `get_lookup_reference(1)`](#ap4s-usage-macro---get_lookup_reference1)
-      - [AP4S Usage Macro - `get_datamodel_reference(1)`](#ap4s-usage-macro---get_datamodel_reference1)
+- [**Conf Presentation - Utility SPL From slides**](#conf-presentation---utility-spl-from-slides)
+  - [Conf Presentation - Macro for Normalizing Search ID](#conf-presentation---macro-for-normalizing-search-id)
+  - [Conf Presentation - Utility Regex Patterns for Parsing Audittrail Fields](#conf-presentation---utility-regex-patterns-for-parsing-audittrail-fields)
+  - [Conf Presentation - Utility SPL Provided for Collection of Search Info \& Write to Summary](#conf-presentation---utility-spl-provided-for-collection-of-search-info--write-to-summary)
+    - [Notes on Summary Collection SPL Utilities](#notes-on-summary-collection-spl-utilities)
+    - [`search/jobs` Metadata Collection SPL - No search.log](#searchjobs-metadata-collection-spl---no-searchlog)
+    - [`search/jobs/<search ID>/search.log` search.log Collection SPL - Both MetaData and search.log](#searchjobssearch-idsearchlog-searchlog-collection-spl---both-metadata-and-searchlog)
+    - [Reporting SPL Using Collected Summary Data](#reporting-spl-using-collected-summary-data)
+      - [Reporting SPL - `/search/jobs` Metadata - `sourcetype=`](#reporting-spl---searchjobs-metadata---sourcetype)
+      - [Reporting SPL - `search.log` via REST - `sourcetype=search_jobs_search_log_events`](#reporting-spl---searchlog-via-rest---sourcetypesearch_jobs_search_log_events)
+  - [Conf Presentation - Object Usage Identification Macros](#conf-presentation---object-usage-identification-macros)
+    - [AP4S Usage Macro - `get_index_reference(1)`](#ap4s-usage-macro---get_index_reference1)
+    - [AP4S Usage Macro - `get_sourcetype_reference(1)`](#ap4s-usage-macro---get_sourcetype_reference1)
+    - [AP4S Usage Macro - `get_source_reference(1)`](#ap4s-usage-macro---get_source_reference1)
+    - [AP4S Usage Macro - `get_eventtype_reference(1)`](#ap4s-usage-macro---get_eventtype_reference1)
+    - [AP4S Usage Macro - `get_macro_reference(1)`](#ap4s-usage-macro---get_macro_reference1)
+    - [AP4S Usage Macro - `get_lookup_reference(1)`](#ap4s-usage-macro---get_lookup_reference1)
+    - [AP4S Usage Macro - `get_datamodel_reference(1)`](#ap4s-usage-macro---get_datamodel_reference1)
 
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Presentation Slide Deck Resources & Materials
+# **Presentation Slide Deck Resources & Materials**
 
 Presentation slides will be updated as issues are identified or additional functionality is made available, see below link for latest version.
 
@@ -102,7 +102,7 @@ Use the key combination `CTRL/CMD + Shift + F` within your Splunk search page to
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Other Presentations/Utilities I want to Recommend
+# **Other Presentations/Utilities I want to Recommend**
 
 These are some other presentations that I've found particularly beneficial or filled with useful information. This is by no means exhaustive, but it's my point of perspective on some great sessions.
 
@@ -111,7 +111,7 @@ Past Conf sessions not currently available on the Conf website can be accessed v
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-## Utilities - Apps and Other Tools Not by Me
+## **Utilities - Apps and Other Tools Not by Me**
 
 Apps referenced during the 2024 conf presentation here. If you'd like to share your work, reach out!
 
@@ -134,13 +134,10 @@ Apps referenced during the 2024 conf presentation here. If you'd like to share y
 
 - [Utilities for Converting Internal Metrics to MetricStore Format by Silkyrich](https://github.com/silkyrich/splunk_internal_metrics)
   - Conversion of internal metrics data to metrics format events for better storage and search performance using mstats
-
 - [Splunk Cluster Health Reporting Dashboards by Silkyrich](https://github.com/silkyrich/cluster_health_tools/tree/master)
   - Multiple dashboards for reporting on cluster health and metrics.
-
 - [Dashboard for Metrics on Ingestion Blocks](https://github.com/dpaper-splunk/public/blob/master/dashboards/metrics_related_to_ingestion_blockage.xml)
   - Looks at data ingestion metrics including forwarder and indexer tiers. Designed to work with Splunk Cloud, but can be easily adapted to on prem
-
 - [Getting Smarter about Splunk SmartStore](https://github.com/redvelociraptor/gettingsmarter/tree/main)
   - Reporting related to Splunk SmartStore activity
 
@@ -150,10 +147,8 @@ Apps referenced during the 2024 conf presentation here. If you'd like to share y
 
 - [David Paper's Extended Search Reporting XML Dashboard](https://github.com/dpaper-splunk/public)
   - Looks at Search load in Splunk with a different lens than Monitoring Console. Works for both Splunk Cloud and Splunk on premise
-
 - [Redundant & Inefficient Search Spotter App - Splunk Works](https://splunkbase.splunk.com/app/7300)
   - See PLA1457B (.conf24)
-
 - Search Reporting Dashboards/Utilities by Nico V:
   - Bundle Push Investigator
   - High CPU Searches
@@ -169,7 +164,7 @@ Apps referenced during the 2024 conf presentation here. If you'd like to share y
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-## Presentations - Ryan Wood
+## **Presentations - Ryan Wood**
 
 I've given two other technical deep dive presentations in recent years that follow the example of this talk with extreme depth and lots of examples to use:
 - [Maximizing Splunk SPL: Foreach and the Power of Iterative, Templatized Evals - Presentation Resources & Information](https://github.com/TheWoodRanger/presentation-splunk_foreach)
@@ -180,7 +175,7 @@ I've given two other technical deep dive presentations in recent years that foll
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-## **Presentations - Query Writing and Optimization**
+## Presentations - Query Writing and Optimization
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -265,14 +260,14 @@ I've given two other technical deep dive presentations in recent years that foll
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-## Conf Presentation - Utility SPL From slides
+# **Conf Presentation - Utility SPL From slides**
 
 These SPL queries are provided in the PDF, but referenced here for easier access. **These are only a small portion of everything provided in the PDF, just highlights.**
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-### Conf Presentation - Macro for Normalizing Search ID
+## Conf Presentation - Macro for Normalizing Search ID
 
 `get_normalized_search_id(1)` - Contained in Splunk Cloud Migration Assessment app as of 2024.06.10
 
@@ -297,7 +292,7 @@ definition = rex field=$search_id$ mode=sed "s/^'|'$//g" \
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-### Conf Presentation - Utility SPL for Parsing Audittrail
+## Conf Presentation - Utility Regex Patterns for Parsing Audittrail Fields
 
 Audittrail includes full SPL queries, so auto extraction often picks up false fields from the original search SPL. To avoid this, manually exrtract all queries you want to work with:
 
@@ -318,14 +313,16 @@ Audittrail includes full SPL queries, so auto extraction often picks up false fi
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-### Conf Presentation - Utility SPL Provided for Collection of Search Info & Write to Summary
+## Conf Presentation - Utility SPL Provided for Collection of Search Info & Write to Summary
 
 SPL queries presented within .Conf 2024 presentation for collection of information from REST `/search/jobs` endpoint and collection of `search.log` files via REST.
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#### Notes on Summary Collection SPL Utilities
+### Notes on Summary Collection SPL Utilities
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 **Tuning/Configuration**
 
@@ -335,7 +332,7 @@ SPL queries presented within .Conf 2024 presentation for collection of informati
 - Create scheduled search for this process. Ensure it has permissions to use REST endpoints.
   - Schedule should ideally be every 2 minutes, but start with every 5m and ensure no issues with dispatch directory reaping.
 
-
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 **Functionality Notes**
 - See slides 128-133 for SPL highlights and tips for usage.
@@ -347,7 +344,7 @@ SPL queries presented within .Conf 2024 presentation for collection of informati
   - See slide 132 for info on this.
 - Uses `| foreach` to clean empty-string field values.
 
-
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 **Best Practice**
 - Always filter out any other searches that are using `/search/jobs` endpoint to avoid recursion risk.
@@ -360,9 +357,10 @@ SPL queries presented within .Conf 2024 presentation for collection of informati
 
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-#### `search/jobs` Metadata Collection SPL - No search.log
+### `search/jobs` Metadata Collection SPL - No search.log
 
 Collects metadata information on searches and writes to summary index. Does not collect search.log file information.
 
@@ -416,11 +414,11 @@ Version 1.0 - 2024.06.10
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#### `search/jobs/<search ID>/search.log` search.log Collection SPL - Both MetaData and search.log
+### `search/jobs/<search ID>/search.log` search.log Collection SPL - Both MetaData and search.log
 
 Collects and writes information to summary index from REST api via scheduled search:
-- Metadata information on searches from `/search/jobs` base REST endpoint
-- search.log information filtered to Index Usage lines identified and discussed in presentation
+1. Metadata information on searches from `/search/jobs` base REST endpoint
+2. search.log information filtered to Index Usage lines identified and discussed in presentation
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -436,6 +434,7 @@ Collects and writes information to summary index from REST api via scheduled sea
   - Original line and Meta fields separated by string "~~~META:"
   - Be cautious changing order of fields without updating SPL that consumes this summary data using regex patterns expecting specific sequence.
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 Version 1.0 - 2024.06.10
@@ -517,11 +516,11 @@ Version 1.0 - 2024.06.10
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#### Reporting SPL Using Collected Summary Data
+### Reporting SPL Using Collected Summary Data
 
 Reporting SPL shown in presentation that consumes summary data written by SPL utilities above for search/jobs and search.log information.
 
-##### Reporting SPL - `/search/jobs` Metadata - `sourcetype=`
+#### Reporting SPL - `/search/jobs` Metadata - `sourcetype=`
 
 Breakout of `keywords` information captured from Metadata collection job against `/search/jobs` REST endpoint:
 
@@ -539,7 +538,7 @@ BY savedsearch_label
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-##### Reporting SPL - `search.log` via REST - `sourcetype=search_jobs_search_log_events`
+#### Reporting SPL - `search.log` via REST - `sourcetype=search_jobs_search_log_events`
 
 Breakout of index references based on search.log lines correlated with Index Usage insights:
 
@@ -560,7 +559,7 @@ index=summary sourcetype=search_jobs_search_log_events
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-### Conf Presentation - Object Usage Identification Macros
+## Conf Presentation - Object Usage Identification Macros
 
 Macros were gathered from App: `Admin Pilot For Splunk (AP4S) / insights_app_splunk` version 1.1.12
 Please see [app on Splunkbase](https://splunkbase.splunk.com/app/6489) for latest version of objects and other great reporting pieces.
@@ -579,7 +578,7 @@ App on Splunkbase: [https://splunkbase.splunk.com/app/6489](https://splunkbase.s
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#### AP4S Usage Macro - `get_index_reference(1)`
+### AP4S Usage Macro - `get_index_reference(1)`
 
 UI definition:
 
@@ -621,7 +620,7 @@ definition = rex field=$field$ max_match=100 "index\s*=[\s\"]?(?<Index_Reference
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#### AP4S Usage Macro - `get_sourcetype_reference(1)`
+### AP4S Usage Macro - `get_sourcetype_reference(1)`
 
 UI definition:
 
@@ -646,7 +645,7 @@ definition = rex field=$field$ max_match=100 "sourcetype\s*!?=\s*(?<Sourcetype_R
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#### AP4S Usage Macro - `get_source_reference(1)`
+### AP4S Usage Macro - `get_source_reference(1)`
 
 UI definition:
 
@@ -682,7 +681,7 @@ definition = rex field=$field$ max_match=100 "source\\s*=\\s*(?<Source_Reference
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#### AP4S Usage Macro - `get_eventtype_reference(1)`
+### AP4S Usage Macro - `get_eventtype_reference(1)`
 
 UI definition:
 
@@ -718,7 +717,7 @@ definition = rex field=$field$ max_match=100 "eventtype\\s*=\\s*(?<Eventtype_Ref
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#### AP4S Usage Macro - `get_macro_reference(1)`
+### AP4S Usage Macro - `get_macro_reference(1)`
 
 UI definition:
 
@@ -760,7 +759,7 @@ definition = rex field=$field$ max_match=100 "`(?<Macro_Reference>\p{Any}+?)`" \
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#### AP4S Usage Macro - `get_lookup_reference(1)`
+### AP4S Usage Macro - `get_lookup_reference(1)`
 
 UI definition:
 
@@ -801,7 +800,7 @@ definition = rex field=$field$ max_match=100 "\|\s*inputlookup\s+(?<Input_Lookup
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#### AP4S Usage Macro - `get_datamodel_reference(1)`
+### AP4S Usage Macro - `get_datamodel_reference(1)`
 
 
 UI definition:
@@ -832,5 +831,3 @@ definition = rex field=$field$ max_match=100 "[fF][rR][oO][mM]\s*[dD][aA][tT][aA
 | fields - Datamodel_Reference1 Datamodel_Reference2\
 | fillnull value="no-datamodel-reference" Datamodel_Reference
 ```
-
-
