@@ -3,7 +3,11 @@
 This repo is as landing page for presentation resources, information, known issues, and updates from the Splunk .Conf 2024 session *Maximizing Splunk Core: Analyzing Splunk Searches Using audittrail and Native Splunk Telemetry* given by Ryan Wood.
 
 
-**2024.06 - Presentation recording will be added here when Splunk makes it available**
+## Presentation Recording
+
+Please use the slide deck linked below, rather than the one posted on the Conf website.
+https://conf.splunk.com/files/2024/recordings/PLA1837B.mp4
+
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
