@@ -302,7 +302,7 @@ Audittrail includes full SPL queries, so auto extraction often picks up false fi
 
 ```spl
 (index=_audit sourcetype=audittrail source="*audit.log*" action=search)
-| rex field=_raw max_match=0 "sourcetype_count__(?<sourcetype_val>\w+)=(?<eventCount>\d+)"
+| rex field=_raw max_match=0 "sourcetype_count__(?<sourcetype_val>[^=]+)=(?<eventCount>\d+)"
 | rex field=_raw ",\ssavedsearch_name=\"(?<savedsearch_name>[^\"]+?)\""
 | rex field=_raw ",\ssearch_id='(?<search_id>[^',]+)"
 | rex field=_raw ",\sapp=\"(?<app>[^\"]+)\""
