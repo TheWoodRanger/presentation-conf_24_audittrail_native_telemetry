@@ -2,6 +2,7 @@
 
 This repo is as landing page for presentation resources, information, known issues, and updates from the Splunk .Conf 2024 session *Maximizing Splunk Core: Analyzing Splunk Searches Using audittrail and Native Splunk Telemetry* given by Ryan Wood.
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## Presentation Recording
 
@@ -11,10 +12,9 @@ https://conf.splunk.com/files/2024/recordings/PLA1837B.mp4
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
 ## **Presentation Slides - Full PDF**
 
-**Current Version of Slides: 1.0** - Link to Slides PDF: [Slide Deck](./PLA1837B%20-%20Splunk%20Audittrail%20Native%20Telemetry%20Conf%202024%20Presentation%20v1.0.pdf)
+**Current Version of Slides: 1.1** - Link to Slides PDF: [Slide Deck](./PLA1837B%20-%20Splunk%20Audittrail%20Native%20Telemetry%20Conf%202024%20Presentation%20v1.1.pdf)
 
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -37,6 +37,7 @@ Twitter: `@TheWoodRanger`
 # **Table of Contents**
 
 - [Maximizing Splunk Core: Analyzing Splunk Searches Using Audittrail and Native Splunk Telemetry](#maximizing-splunk-core-analyzing-splunk-searches-using-audittrail-and-native-splunk-telemetry)
+  - [Presentation Recording](#presentation-recording)
   - [**Presentation Slides - Full PDF**](#presentation-slides---full-pdf)
     - [Contact Information](#contact-information)
 - [**Table of Contents**](#table-of-contents)
@@ -55,6 +56,7 @@ Twitter: `@TheWoodRanger`
 - [**Conf Presentation - Utility SPL From slides**](#conf-presentation---utility-spl-from-slides)
   - [Conf Presentation - Macro for Normalizing Search ID](#conf-presentation---macro-for-normalizing-search-id)
   - [Conf Presentation - Utility Regex Patterns for Parsing Audittrail Fields](#conf-presentation---utility-regex-patterns-for-parsing-audittrail-fields)
+    - [Utility - Full Audittrail Notable Search Properties Gather SPL](#utility---full-audittrail-notable-search-properties-gather-spl)
   - [Conf Presentation - Utility SPL Provided for Collection of Search Info \& Write to Summary](#conf-presentation---utility-spl-provided-for-collection-of-search-info--write-to-summary)
     - [Notes on Summary Collection SPL Utilities](#notes-on-summary-collection-spl-utilities)
     - [`search/jobs` Metadata Collection SPL - No search.log](#searchjobs-metadata-collection-spl---no-searchlog)
@@ -79,7 +81,7 @@ Twitter: `@TheWoodRanger`
 
 Presentation slides will be updated as issues are identified or additional functionality is made available, see below link for latest version.
 
-**Current Version of Slides: 1.0** - Link to Slides PDF: [Slide Deck](./PLA1837B%20-%20Splunk%20Audittrail%20Native%20Telemetry%20Conf%202024%20Presentation%20v1.0.pdf)
+**Current Version of Slides: 1.1** - Link to Slides PDF: [Slide Deck](./PLA1837B%20-%20Splunk%20Audittrail%20Native%20Telemetry%20Conf%202024%20Presentation%20v1.1.pdf)
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -93,6 +95,14 @@ Use the key combination `CTRL/CMD + Shift + F` within your Splunk search page to
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## Changelog of PDF Slide Deck
+
+<details>
+<summary>v1.1 - 2025.07.07 - audittrail SPL Regex Updates</summary>
+
+>  - Updated audittrail SPL regex patterns to address issues with sourcetype usage extraction & search SPL query extraction.
+>    - Pattern (?<searchQuery>[\W\w\n]+) has been updated to (?<searchQuery>[\W\w\n]+?)
+>    - Pattern (?<sourcetype_val>[\w]+) has been updated to (?<sourcetype_val>[^=]+)
+</details>
 
 <details>
 <summary>v1.0 - 2024.06.10</summary>
@@ -308,9 +318,39 @@ Audittrail includes full SPL queries, so auto extraction often picks up false fi
 | rex field=_raw ",\sapp=\"(?<app>[^\"]+)\""
 | rex field=_raw ",\suser=(?<user>[^,]+)"
 | rex field=_raw ",\sinfo=(?<info>[^,]+)"
-| rex field=_raw ",\ssearch='(?<searchQuery>[\W\w\n]+)'((,\sautojoin=)|(\])|(,\sis_federated_search=)|(,\sincomplete_bucket_maps=)|(,\s[^\s=]+=))"
+| rex field=_raw ",\ssearch='(?<searchQuery>[\W\w\n]+?)'((,\sautojoin=)|(\])|(,\sis_federated_search=)|(,\sincomplete_bucket_maps=)|(,\s[^\s=]+=))"
 | eval searchQuery = replace(searchQuery, "',\s[^\s=]+='[^']+$", "")
 
+```
+
+### Utility - Full Audittrail Notable Search Properties Gather SPL
+
+SPL utility for gathering latest information reported for each search ID across notable fields as identified in v9.2.5
+
+```spl
+index=_audit sourcetype=audittrail action=search (info=completed OR (info=granted AND search=*))
+| rex field=_raw max_match=0 "sourcetype_count__(?<sourcetype_val>[^=]+)=(?<eventCount>\d+)"
+| rex field=_raw ",\ssavedsearch_name=\"(?<savedsearch_label>[^\"]*)\"((,\s(search_startup_time=))|(\])|(,\sis_proxied=)|(,\ssearch_type=))"
+| rex field=_raw ",\ssearch_id='(?<search_id>[^',]+)"
+| rex field=_raw ",\sapp=\"(?<app>[^\"]+)\""
+| rex field=_raw ",\suser=(?<user>[^,]+)" 
+| rex field=_raw ",\sinfo=(?<info>[^,]+)"
+| rex field=_raw ",\ssearch='(?<searchQuery>[\W\w\n]+?)'((,\sautojoin=)|(\])|(,\sis_federated_search=)|(,\sincomplete_bucket_maps=)|(,\s[^\s=]+=))"
+| eval searchQuery = replace(searchQuery, "',\s[^\s=]+='[^']+$", "")
+| fields _time, search_id, savedsearch_label, searchQuery, user, host, app, provenance, info, search_et, search_lt, exec_time, search_startup_time, total_run_time, sourcetype_val, event_count, result_count, available_count, scan_count, drop_count, searched_buckets, eliminated_buckets, considered_events, total_slices, decompressed_slices, duration_command_search_rawdata, duration_command_search_index, fully_completed_search, has_error_warn, is_federated_search, is_prjob, is_flex_search, is_proxied, is_*
+| eval savedsearch_label = if(len(savedsearch_label) < 1 OR !match(savedsearch_label, "\w") OR match(savedsearch_label, "^search\d{1,3}$"), null(), savedsearch_label) 
+``` Remove newlines and explicit tabs within SPL to make output table shorter ```
+| eval searchQuery = replace(searchQuery, "\n", " ") 
+| eval searchQuery = replace(searchQuery, "\t", "    ") 
+| eval user = if(len(user) < 1 OR !match(user, "\w"), null(), user) 
+| eval env = if(match(host, "splunkcloud\.com"), "Cloud", "OnPrem") 
+``` Concatenate multivalue before passing through latest function ```
+| foreach * [| eval <<FIELD>> = if( mvcount('<<FIELD>>') > 1, mvjoin('<<FIELD>>', ":~:"), '<<FIELD>>' )]
+| stats max(_time) as latestAuditTime, latest(*) AS * by search_id, env
+``` Convert concatenated MV back to proper MV ```
+| foreach * [| eval <<FIELD>> = split('<<FIELD>>', ":~:")]
+| rename searchQuery AS search, savedsearch_label AS savedsearch_name
+| eval sid = replace( search_id, "'", "" ) 
 ```
 
 
